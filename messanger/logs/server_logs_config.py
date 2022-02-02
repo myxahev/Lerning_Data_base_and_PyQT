@@ -1,32 +1,37 @@
 # Логгерский конфиг для сервера
 
 import sys
+
+sys.path.append('../')
+import logging.handlers
 import os
-import logging
-import lesson_8.common.variables as variables
 
-LOG_DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), variables.LOG_DIRECTORY)
-LOG_FILE = os.path.join(LOG_DIRECTORY, variables.LOG_SERVER_NAME)
+# from messanger.data.utils import *
 
-LOGGER = logging.getLogger('server')
-LOGGER.setLevel(logging.DEBUG)
+# создаём формировщик логов (formatter):
+server_formatter = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
 
-FORMAT = logging.Formatter('%(asctime)-10s %(levelname)-10s %(filename)-10s %(message)s')
+# Подготовка имени файла для логирования
+path = os.path.dirname(os.path.abspath(__file__))
+path = os.path.join(path, 'server.log')
 
-STDERR_HANDLER = logging.StreamHandler(sys.stderr)
-STDERR_HANDLER.setLevel(logging.INFO)
-STDERR_HANDLER.setFormatter(FORMAT)
+# создаём потоки вывода логов
+steam = logging.StreamHandler(sys.stderr)
+steam.setFormatter(server_formatter)
+steam.setLevel(logging.INFO)
+log_file = logging.handlers.TimedRotatingFileHandler(path, encoding='utf8', interval=1, when='D')
+log_file.setFormatter(server_formatter)
 
-FILE_HANDLER = logging.FileHandler(LOG_FILE)
-FILE_HANDLER.setLevel(logging.DEBUG)
-FILE_HANDLER.setFormatter(FORMAT)
+# создаём регистратор и настраиваем его
+logger = logging.getLogger('server')
+logger.addHandler(steam)
+logger.addHandler(log_file)
+logger.setLevel(data["LOGGING_LEVEL"])
 
-LOGGER.addHandler(STDERR_HANDLER)
-LOGGER.addHandler(FILE_HANDLER)
-
+# отладка
 if __name__ == '__main__':
-    LOGGER.critical('Критическая ошибка')
-    LOGGER.error('Ошибка')
-    LOGGER.debug('Отладочная информация')
-    LOGGER.info('Информационное сообщение')
-    LOGGER.warning('Внимание')
+    logger.critical('Критическая ошибка')
+    logger.error('Ошибка')
+    logger.debug('Отладочная информация')
+    logger.info('Информационное сообщение')
+    logger.warning('Внимание')
