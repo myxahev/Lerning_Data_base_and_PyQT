@@ -3,9 +3,11 @@
 import socket
 import argparse
 import select
+import threading
 from data.utils import *
 from descriptors import Port
 from metaclasses import ServerVerifier
+from db_contcol import Server_db
 
 # Инициализация логирования сервера.
 logger = logging.getLogger('server')
@@ -24,13 +26,16 @@ def arg_parser():
 
 
 # Основной класс сервера
-class Server(metaclass=ServerVerifier):
+class Server(threading.Thread, metaclass=ServerVerifier):
     port = Port()
 
-    def __init__(self, listen_address, listen_port):
+    def __init__(self, listen_address, listen_port, db):
         # Параметры подключения
         self.addr = listen_address
         self.port = listen_port
+
+        # База данных сервера
+        self.db = db
 
         # Список подключённых клиентов.
         self.clients = []
@@ -40,6 +45,9 @@ class Server(metaclass=ServerVerifier):
 
         # Словарь содержащий сопоставленные имена и соответствующие им сокеты.
         self.names = dict()
+
+        # Конструктор предка
+        super().__init__()
 
     def init_socket(self):
         logger.info(
@@ -55,7 +63,7 @@ class Server(metaclass=ServerVerifier):
         self.sock = transport
         self.sock.listen()
 
-    def main_loop(self):
+    def run(self):
         # Инициализация Сокета
         self.init_socket()
 
@@ -128,6 +136,8 @@ class Server(metaclass=ServerVerifier):
             # иначе отправляем ответ и завершаем соединение.
             if message[data["USER"]][data["ACCOUNT_NAME"]] not in self.names.keys():
                 self.names[message[data["USER"]][data["ACCOUNT_NAME"]]] = client
+                client_ip, client_port = client.getpeername()
+                self.db.init_user(message[data["USER"]][data["ACCOUNT_NAME"]], client_ip, client_port)
                 send_message(client, data["RESPONSE_200"])
             else:
                 response = RESPONSE_400
@@ -144,6 +154,7 @@ class Server(metaclass=ServerVerifier):
             return
         # Если клиент выходит
         elif data["ACTION"] in message and message[data["ACTION"]] == data['EXIT'] and data["ACCOUNT_NAME"] in message:
+            self.db.destroy_user_session(message[data["ACCOUNT_NAME"]])
             self.clients.remove(self.names[data["ACCOUNT_NAME"]])
             self.names[data["ACCOUNT_NAME"]].close()
             del self.names[data["ACCOUNT_NAME"]]
@@ -155,14 +166,53 @@ class Server(metaclass=ServerVerifier):
             send_message(client, response)
             return
 
+def print_help():
+    print('Поддерживаемые комманды:')
+    print('users - список известных пользователей')
+    print('connected - список подключённых пользователей')
+    print('loghist - история входов пользователя')
+    print('exit - завершение работы сервера.')
+    print('help - вывод справки по поддерживаемым командам')
 
 def main():
     # Загрузка параметров командной строки, если нет параметров, то задаём значения по умоланию.
     listen_address, listen_port = arg_parser()
 
+    # Инициализация базы данных
+    db = Server_db()
+
     # Создание экземпляра класса - сервера.
-    server = Server(listen_address, listen_port)
-    server.main_loop()
+    server = Server(listen_address, listen_port, db)
+    server.daemon = True
+    server.start()
+    # server.main_loop()
+
+
+
+    # Печатаем справку:
+    print_help()
+
+    # Основной цикл сервера:
+    while True:
+
+        command = input('Введите команду: ')
+        if command == 'help':
+            print_help()
+        elif command == 'exit':
+            break
+        elif command == 'users':
+            for user in sorted(db.users_list()):
+                print(f'Пользователь {user[0]}, последний вход: {user[1]}')
+        elif command == 'connected':
+            for user in sorted(db.active_users_list()):
+                print(f'Пользователь {user[0]}, подключен: {user[1]}:{user[2]}, время установки соединения: {user[3]}')
+        elif command == 'loghist':
+            name = input('Введите имя пользователя для просмотра истории. '
+                         'Для вывода всей истории, просто нажмите Enter: ')
+            for user in sorted(db.login_history(name)):
+                print(f'Пользователь: {user[0]} время входа: {user[1]}. Вход с: {user[2]}:{user[3]}')
+        else:
+            print('Команда не распознана.')
 
 
 if __name__ == '__main__':
