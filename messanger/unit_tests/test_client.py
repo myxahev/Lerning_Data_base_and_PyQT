@@ -1,44 +1,30 @@
+import sys
+sys.path.append('../')
+from client import create_presence, process_response_ans
+from common.variables import *
 import unittest
-import lesson_8.common.variables as variables
-from lesson_8.client import create_presence_msg, server_process_answer
-
-# корректные данные
-ACTION_GOOD = variables.PRESENCE
-USER_GOOD = 'Sergey'
-PORT = variables.DEFAULT_PORT
-TIME = 1.1
-RESPONSE_GOOD = {variables.RESPONSE: 200}
-MESSAGE_GOOD = '200 : OK'
-
-# некорректные данные
-USER_BAD = 'lold'
-RESPONSE_BAD = {variables.ERROR: 'Bad Request'}
-MESSAGE_BAD = '400 : Bad Request'
-EXPECTED_EXCEPTION = ValueError
+from errors import ReqFieldMissingError, ServerError
 
 
+# Класс с тестами
 class TestClass(unittest.TestCase):
-    def test_process_answer_good(self):
-        self.assertEqual(server_process_answer(RESPONSE_GOOD), MESSAGE_GOOD)
+    # тест коректного запроса
+    def test_def_presense(self):
+        test = create_presence('Guest')
+        test[TIME] = 1.1  # время необходимо приравнять принудительно иначе тест никогда не будет пройден
+        self.assertEqual(test, {ACTION: PRESENCE, TIME: 1.1, USER: {ACCOUNT_NAME: 'Guest'}})
 
-    def test_process_answer_bad(self):
-        self.assertEqual(server_process_answer(RESPONSE_BAD), MESSAGE_BAD)
+    # тест корректтного разбора ответа 200
+    def test_200_ans(self):
+        self.assertEqual(process_response_ans({RESPONSE: 200}), '200 : OK')
 
-    def test_process_answer_error(self):
-        self.assertRaises(EXPECTED_EXCEPTION, server_process_answer, RESPONSE_BAD)
+    # тест корректного разбора 400
+    def test_400_ans(self):
+        self.assertRaises(ServerError, process_response_ans , {RESPONSE: 400, ERROR: 'Bad Request'})
 
-    def test_create_presence_message_default(self):
-        message_main = {
-            variables.ACTION: variables.PRESENCE,
-            variables.TIME: TIME,
-            variables.PORT: variables.DEFAULT_PORT,
-            variables.USER: {
-                variables.ACCOUNT_NAME: USER_GOOD
-            }
-        }
-        message = create_presence_msg()
-        message[variables.TIME] = TIME
-        self.assertEqual(message, message_main)
+    # тест исключения без поля RESPONSE
+    def test_no_response(self):
+        self.assertRaises(ReqFieldMissingError, process_response_ans, {ERROR: 'Bad Request'})
 
 
 if __name__ == '__main__':

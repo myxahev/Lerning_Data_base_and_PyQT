@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
         # Настройки геометрии основного окна
         # Поскольку работать с динамическими размерами мы не умеем, и мало времени на изучение, размер окна фиксирован.
         self.setFixedSize(800, 600)
-        self.setWindowTitle('Stump Chat')
+        self.setWindowTitle('Messaging Server alpha release')
 
         # Надпись о том, что ниже список подключённых клиентов
         self.label = QLabel('Список подключённых клиентов:', self)
