@@ -1,0 +1,29 @@
+message\_proj.unit\_tests package
+=================================
+
+Submodules
+----------
+
+message\_proj.unit\_tests.test\_client module
+---------------------------------------------
+
+.. automodule:: messager.unit_tests.test_client
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.unit\_tests.test\_utils module
+--------------------------------------------
+
+.. automodule:: messager.unit_tests.test_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: messager.unit_tests
+   :members:
+   :undoc-members:
+   :show-inheritance:
