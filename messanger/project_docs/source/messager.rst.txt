@@ -1,0 +1,65 @@
+message\_proj package
+=====================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   messager.client
+   messager.data
+   messager.logs
+   messager.server
+   messager.unit_tests
+
+Submodules
+----------
+
+message\_proj.client module
+---------------------------
+
+.. automodule:: messager.client
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.launcher module
+-----------------------------
+
+.. automodule:: messager.launcher
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.launcher\_ubuntu module
+-------------------------------------
+
+.. automodule:: messager.launcher_ubuntu
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.server module
+---------------------------
+
+.. automodule:: messager.server
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.server\_gui module
+--------------------------------
+
+.. automodule:: messager.server_gui
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: messager
+   :members:
+   :undoc-members:
+   :show-inheritance:

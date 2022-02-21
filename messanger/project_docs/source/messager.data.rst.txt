@@ -1,0 +1,61 @@
+message\_proj.data package
+============================
+
+Submodules
+----------
+
+message\_proj.data.decos module
+---------------------------------
+
+.. automodule:: messager.data.decos
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.data.descriptors module
+---------------------------------------
+
+.. automodule:: messager.data.descriptors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.data.errors\_user module
+----------------------------------------
+
+.. automodule:: messager.data.errors_user
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.data.metaclasses module
+---------------------------------------
+
+.. automodule:: messager.data.metaclasses
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.data.utils module
+---------------------------------
+
+.. automodule:: messager.data.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+message\_proj.data.variables module
+-------------------------------------
+
+.. automodule:: messager.data.variables
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: messager.data
+   :members:
+   :undoc-members:
+   :show-inheritance:
