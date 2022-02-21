@@ -9,11 +9,11 @@ import base64
 import sys
 
 sys.path.append('../')
-from messanger.client.main_window_conv import Ui_MainClientWindow
-from messanger.client.add_contact import AddContactDialog
-from messanger.client.del_contact import DelContactDialog
-from messanger.data.errors_user import ServerError
-from messanger.data.variables import *
+from client.main_window_conv import Ui_MainClientWindow
+from client.add_contact import AddContactDialog
+from client.del_contact import DelContactDialog
+from data.errors_user import ServerError
+from messager.data.variables import *
 
 logger = logging.getLogger('client')
 
